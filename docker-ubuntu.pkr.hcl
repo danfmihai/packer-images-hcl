@@ -8,7 +8,7 @@ packer {
 }
 
 source "docker" "ubuntu" {
-  image  = "ubuntu:xenial"
+  image  = var.docker_image
   commit = true
 }
 
@@ -17,4 +17,26 @@ build {
   sources = [
     "source.docker.ubuntu"
   ]
+  provisioner "shell" {
+    environment_vars = [
+      "FOO=hello world",
+    ]
+    inline = [
+      "echo Adding file to Docker Container",
+      "echo \"FOO is $FOO\" > example.txt",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+
+      "echo Running ${var.docker_image} Docker image."
+    ]
+  }
+
+  variable "docker_image" {
+    type    = string
+    default = "ubuntu:xenial"
+  }
 }
+
